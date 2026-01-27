@@ -1,0 +1,271 @@
+/* Resets */
+
+/* 1. Use a more-intuitive box-sizing model */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* 2. Remove default margin */
+*:not(dialog) {
+  margin: 0;
+}
+
+/* 3. Enable keyword animations */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+}
+
+body {
+  /* 4. Add accessible line-height */
+  line-height: 1.5;
+  /* 5. Improve text rendering */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 6. Improve media defaults */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 7. Inherit fonts for form controls */
+input, button, textarea, select {
+  font: inherit;
+}
+
+/* 8. Avoid text overflows */
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+/* 9. Improve line wrapping */
+p {
+  text-wrap: pretty;
+}
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
+/*
+  10. Create a root stacking context
+*/
+#root, #__next {
+  isolation: isolate;
+}
+
+/* Custom Styles */
+
+/* @font-face {
+  font-family: "Sora";
+  src: url("/assets/fonts/Sora/sora-variablefont_wght-webfont.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+} */
+
+:root {
+    /* Font sizes */
+
+  /* Neutral */
+  --neutral-900: hsl(0, 0%, 7%);
+  --neutral-800: hsl(0, 0%, 15%);
+  --neutral-500: hsl(240, 3%, 46%);
+  --neutral-400: hsl(240, 1%, 59%);
+  --neutral-0:   hsl(0, 0%, 100%);
+
+  /* Blue */
+  --blue-600: hsl(214, 100%, 55%);
+  --blue-400: hsl(210, 100%, 65%);
+
+  /* Red */
+  --red-500: hsl(354, 63%, 57%);
+
+  /* Green */
+  --green-500: hsl(140, 63%, 57%);
+
+  /* Yellow */
+  --yellow-400: hsl(49, 85%, 70%);
+}
+
+
+
+
+
+/* ------------------------- */
+/* Text Preset 1 */
+/* ------------------------- */
+
+/* Desktop - Bold */
+.text-preset-1 {
+  font-weight: 700; /* Bold */
+  font-size: 40px;
+  line-height: 136%;
+  letter-spacing: 0.4px;
+}
+
+/* Mobile override */
+@media (max-width: 768px) {
+  .text-preset-1 {
+    font-size: 24px;
+    line-height: 120%;
+    letter-spacing: 0.32px;
+  }
+}
+
+/* Desktop - Regular variant */
+.text-preset-1-regular {
+  font-weight: 400; /* Regular */
+  font-size: 40px;
+  line-height: 136%;
+  letter-spacing: 0.4px;
+}
+
+/* Mobile override */
+@media (max-width: 768px) {
+  .text-preset-1-regular {
+    font-size: 32px;
+    line-height: 136%;
+  }
+}
+
+/* ------------------------- */
+/* Text Preset 2 (Bold, smaller) */
+/* ------------------------- */
+.text-preset-2 {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 100%;
+  letter-spacing: 0;
+}
+
+/* ------------------------- */
+/* Text Preset 3 */
+/* ------------------------- */
+
+/* Regular */
+.text-preset-3 {
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: -0.6px;
+}
+
+/* Mobile override */
+@media (max-width: 768px) {
+  .text-preset-3 {
+    font-size: 16px;
+    letter-spacing: -0.48px;
+  }
+}
+
+/* SemiBold variant */
+.text-preset-3-semibold {
+  font-weight: 600; /* SemiBold */
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: -0.3px;
+}
+
+/* ------------------------- */
+/* Text Preset 4 */
+/* ------------------------- */
+.text-preset-4 {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 120%;
+  letter-spacing: -0.6px;
+}
+
+/* ------------------------- */
+/* Text Preset 5 */
+/* ------------------------- */
+.text-preset-5 {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: -0.48px;
+}
+
+/* ------------------------- */
+/* Text Preset 6 */
+/* ------------------------- */
+.text-preset-6 {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 120%;
+  letter-spacing: 0;
+}
+
+/* ------------------------- */
+/* Border-radius */
+/* ------------------------- */
+
+.radius-0 { border-radius: 0; }
+.radius-4 { border-radius: 4px; }
+.radius-6 { border-radius: 6px; }
+.radius-8 { border-radius: 8px; }
+.radius-10 { border-radius: 10px; }
+.radius-12 { border-radius: 12px; }
+.radius-16 { border-radius: 16px; }
+.radius-20 { border-radius: 20px; }
+.radius-24 { border-radius: 24px; }
+.radius-full { border-radius: 999px; }
+
+/* ------------------------- */
+/* Spacing Utilities - Padding */
+/* ------------------------- */
+
+.p-0 { padding: 0; }
+.p-25 { padding: 2px; }
+.p-50 { padding: 4px; }
+.p-75 { padding: 6px; }
+.p-100 { padding: 8px; }
+.p-125 { padding: 10px; }
+.p-150 { padding: 12px; }
+.p-200 { padding: 16px; }
+.p-250 { padding: 20px; }
+.p-300 { padding: 24px; }
+.p-400 { padding: 32px; }
+.p-500 { padding: 40px; }
+.p-600 { padding: 48px; }
+.p-800 { padding: 64px; }
+.p-1000 { padding: 80px; }
+.p-1200 { padding: 96px; }
+.p-1400 { padding: 112px; }
+.p-1600 { padding: 128px; }
+.p-1800 { padding: 140px; }
+
+/* ------------------------- */
+
+body{
+    font-family: 'Sora', sans-serif;
+    background-color: var(--neutral-900);
+    color:var(--neutral-0);
+    min-height: 100vh;
+    width: 100%;
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+   
+}
+p{
+  color:var(--neutral-400)
+}
+.white-accent{
+  color: var(--neutral-0);
+}
+.main-container, .header-container{
+  max-width: 1216px;
+  width: 100%;
+}
+.header-container{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+   padding:32px 16px;
+}
+.personal-best-container{
+  display:flex;
+  gap:10px;
+}
