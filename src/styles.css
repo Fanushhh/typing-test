@@ -34,6 +34,18 @@ img, picture, video, canvas, svg {
 input, button, textarea, select {
   font: inherit;
 }
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+legend {
+  padding: 0;
+  margin-bottom: 8px;
+  font-weight: 400;
+  color:var(--neutral-500)
+}
 
 /* 8. Avoid text overflows */
 p, h1, h2, h3, h4, h5, h6 {
@@ -196,6 +208,11 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 120%;
   letter-spacing: 0;
 }
+.thin-text-preset{
+  font-size:24px;
+  font-weight:100;
+  color:var(--neutral-500);
+}
 
 /* ------------------------- */
 /* Border-radius */
@@ -252,12 +269,23 @@ body{
 p{
   color:var(--neutral-400)
 }
+hr{
+  border: none;
+  border-top: 1px solid var(--neutral-800);
+  margin: 20px 0;
+}
+fieldset{
+  display:flex;
+  align-items: center;
+  gap:1rem;
+}
 .white-accent{
   color: var(--neutral-0);
 }
 .main-container, .header-container{
   max-width: 1216px;
   width: 100%;
+  padding:32px 16px;
 }
 .header-container{
   display:flex;
@@ -268,4 +296,66 @@ p{
 .personal-best-container{
   display:flex;
   gap:10px;
+}
+.shake{
+  animation: shake 0.3s 3;
+  transition: all 0.3s ease-in-out;
+  animation-timing-function: ease-in-out;
+}
+.performance-metric, .performance-metrics-container{
+  display:flex;
+  gap:1rem;
+  align-items: center;
+}
+.performance-details-container{
+  display:flex;
+  justify-content: space-between;
+}
+.dificulty-settings-container{
+  display:flex;
+  gap:1rem;
+}
+.performance-details-container, .dificulty-settings-container{
+  align-items: center;
+}
+.buttons-container{
+  display:flex;
+  
+  gap:16px;
+}
+.button{
+  display:inline-flex;
+  flex-direction:column;
+
+}
+label{
+  border:1px solid var(--neutral-0);
+  padding: 5px 8px;
+  border-radius:5px;
+}
+input[type="radio"]{
+  visibility: hidden;
+  display:none;
+}
+label:hover{
+  cursor: pointer;
+}
+input[type="radio"]:checked + label{
+  
+    border:1px solid var(--blue-600);
+    color:var(--blue-600);
+    transition: all .2s ease-in;
+}
+input[type="radio"]:focus + label {
+  outline: 2px solid var(--blue-400);
+  outline-offset: 2px;
+}
+@keyframes shake {
+  
+   0% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  50% { transform: rotate(0eg); }
+  75% { transform: rotate(-10deg); }
+  100% { transform: rotate(0deg); }
+  
 }

@@ -1,31 +1,135 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="../dist/index.js"></script>
-</head>
-<body>
-   
-
+  </head>
+  <body>
     <header class="header-container">
-        <picture>
-            <source media="(min-width: 768px)" srcset="../assets/images/logo-large.svg">
-            <source media="(max-width: 767px)" srcset="../assets/images/logo-small.svg">
-            <img src="../assets/images/logo-small.svg" alt="" srcset="./assets/images/logo-large.svg">
-        </picture>
-        <div class="personal-best-container">
-            <img src="./assets/images/icon-personal-best.svg" alt="">
-            <p class="test-preset-4">Personal best: <span class="white-accent">78 WPM</span></p>
-        </div>
+      <picture>
+        <source
+          media="(min-width: 768px)"
+          srcset="../assets/images/logo-large.svg"
+        />
+        <source
+          media="(max-width: 767px)"
+          srcset="../assets/images/logo-small.svg"
+        />
+        <img
+          src="../assets/images/logo-small.svg"
+          alt=""
+          srcset="./assets/images/logo-large.svg"
+        />
+      </picture>
+      <div class="personal-best-container">
+        <img
+          src="../assets/images/icon-personal-best.svg"
+          class="shake"
+          alt=""
+        />
+        <p class="test-preset-4">
+          Personal best: <span class="white-accent">78 WPM</span>
+        </p>
+      </div>
     </header>
     <main class="main-container">
+      <section class="performance-details-container">
+        <div class="performance-metrics-container">
+          <div class="performance-metric">
+            <p class="text-preset-3">
+              WPM: <span class="text-preset-2 white-accent">65</span>
+            </p>
+          </div>
+          <span class="thin-text-preset">|</span>
+          <div class="performance-metric">
+            <p class="text-preset-3">
+              Accuracy: <span class="white-accent text-preset-2">92%</span>
+            </p>
+          </div>
+          <span class="thin-text-preset">|</span>
+          <div class="performance-metric">
+            <p class="text-preset-3">
+              Time: <span class="text-preset-2 white-accent">60s</span>
+            </p>
+          </div>
+        </div>
 
+        <div class="dificulty-settings-container">
+          <fieldset id="difficulty-fieldset">
+            <p>Difficulty:</p>
+            <div class="buttons-container">
+              <div class="button">
+                <input
+                  type="radio"
+                  name="diffInput"
+                  id="easy"
+                  value="easy"
+                  aria-label="Easy difficulty"
+                />
+                <label for="easy">easy</label>
+              </div>
+              <div class="button">
+                <input
+                  type="radio"
+                  checked="true"
+                  name="diffInput"
+                  id="medium"
+                  value="medium"
+                  aria-label="Medium difficulty"
+                />
+                <label for="medium">medium</label>
+              </div>
+              <div class="button">
+                <input
+                  type="radio"
+                  name="diffInput"
+                  id="hard"
+                  value="hard"
+                  aria-label="Hard difficulty"
+                />
+                <label for="hard">hard</label>
+              </div>
+            </div>
+          </fieldset>
+          <span class="thin-text-preset">|</span>
+          <fieldset id="mode-fieldset">
+            <p>Mode:</p>
+            <div class="buttons-container">
+              <div class="button">
+                <input
+                  type="radio"
+                  checked="true"
+                  value="timed"
+                  name="mode"
+                  id="timed"
+                  aria-label="Timed mode 60 seconds"
+                />
+                <label for="timed">timed (60s)</label>
+              </div>
+              <div class="button">
+                <input
+                  type="radio"
+                  value="passage"
+                  name="mode"
+                  id="passage"
+                  aria-label="Passage mode"
+                />
+                <label for="passage">passage</label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </section>
+      <hr />
     </main>
-</body>
+  </body>
 </html>
