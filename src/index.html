@@ -52,20 +52,21 @@
           <span class="thin-text-preset">|</span>
           <div class="performance-metric">
             <p class="text-preset-3">
-              Accuracy: <span class="white-accent text-preset-2">92%</span>
+              Accuracy: <span class="white-accent text-preset-2 accuracy-container">92%</span>
             </p>
           </div>
           <span class="thin-text-preset">|</span>
           <div class="performance-metric">
             <p class="text-preset-3">
-              Time: <span class="text-preset-2 white-accent">60s</span>
+              Time:
+              <span class="text-preset-2 white-accent time-remaining">60s</span>
             </p>
           </div>
         </div>
 
         <div class="dificulty-settings-container">
-          <fieldset id="difficulty-fieldset">
-            <p>Difficulty:</p>
+          <fieldset class="difficulty">
+            <p class="mobile-hide">Difficulty:</p>
             <div class="buttons-container">
               <div class="button">
                 <input
@@ -100,8 +101,8 @@
               </div>
             </div>
           </fieldset>
-          <span class="thin-text-preset">|</span>
-          <fieldset id="mode-fieldset">
+          <span class="thin-text-preset mobile-hide">|</span>
+          <fieldset class="mode">
             <p>Mode:</p>
             <div class="buttons-container">
               <div class="button">
@@ -128,8 +129,28 @@
             </div>
           </fieldset>
         </div>
+        <div class="difficulty-settings-container-mobile">
+          <select name="difficulty" class="difficulty-mobile">
+            <option value="easy">easy</option>
+            <option value="medium">medium</option>
+            <option value="hard">hard</option>
+          </select>
+          <select name="mode" class="mode-mobile">
+            <option value="timed">timed (60s)</option>
+            <option value="passage">passage</option>
+          </select>
+        </div>
       </section>
       <hr />
+      <section class="test-container-modal">
+        <div class="start-button-container">
+          <button class="start-button">Start Typing Test</button>
+          <p>Or click the text and start typing</p>
+
+        </div>
+
+        <div class="text-container text-preset-1-regular inactive"></div>
+      </section>
     </main>
   </body>
 </html>
