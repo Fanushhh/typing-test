@@ -37,7 +37,7 @@
           alt=""
         />
         <p class="test-preset-4">
-          Personal best: <span class="white-accent">78 WPM</span>
+          Personal best: <span class="white-accent "><span class="wpm-container">78</span> WPM</span>
         </p>
       </div>
     </header>
@@ -46,13 +46,16 @@
         <div class="performance-metrics-container">
           <div class="performance-metric">
             <p class="text-preset-3">
-              WPM: <span class="text-preset-2 white-accent">65</span>
+              WPM: <span class="text-preset-2 white-accent wpm-container">65</span>
             </p>
           </div>
           <span class="thin-text-preset">|</span>
           <div class="performance-metric">
             <p class="text-preset-3">
-              Accuracy: <span class="white-accent text-preset-2 accuracy-container">92%</span>
+              Accuracy:
+              <span class="white-accent text-preset-2 accuracy-container"
+                >92%</span
+              >
             </p>
           </div>
           <span class="thin-text-preset">|</span>
@@ -81,9 +84,9 @@
               <div class="button">
                 <input
                   type="radio"
-                  checked="true"
                   name="diffInput"
                   id="medium"
+                  checked
                   value="medium"
                   aria-label="Medium difficulty"
                 />
@@ -146,11 +149,40 @@
         <div class="start-button-container">
           <button class="start-button">Start Typing Test</button>
           <p>Or click the text and start typing</p>
-
         </div>
 
         <div class="text-container text-preset-1-regular inactive"></div>
       </section>
+      <section class="test-complete-container">
+        <img class="test-complete-img" src="./assets/images/icon-completed.svg" />
+        <h2 class="text-preset-1 test-complete-title">Test complete</h2>
+        <p class="text-preset-3">Solid run. Keep pushing to beat your high score.</p>
+        <div class="test-results">
+          <div class="test-metric">
+            <h3 class="text-preset-3">WPM:</h3>
+            <p class="wpm-container text-preset-2"></p>
+          </div>
+          <div class="test-metric">
+            <h3 class="text-preset-3">Accuracy:</h3>
+            <p class="text-preset-2"><span class="accuracy-container"></span></p>
+          </div>
+          <div class="test-metric">
+            <h3 class="text-preset-3">Characters:</h3>
+            <p class="text-preset-2">
+              <span class="correct-char-container">120</span>
+              /
+              <span class="incorrect-char-container">5</span>
+            </p>
+           
+
+          </div>
+        </div>
+        <button class="test-complete-btn">Go again <img src="./assets/images/icon-restart.svg" /></button>
+      </section>
+      
     </main>
+    <footer>
+      <button class="restart-btn"><img src="./assets/images/icon-restart.svg"/>Restart Test</button>
+    </footer>
   </body>
 </html>
