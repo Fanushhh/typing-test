@@ -1,5 +1,13 @@
 import { data } from "./data.js";
 
+type StorageRecord = {
+  name: string;
+  WPM: number;
+  accuracy: string;
+  correctChars: number;
+  incorrectChars: number;
+};
+
 const difficultyInput = document.querySelector(
   ".difficulty",
 )! as HTMLFieldSetElement;
@@ -44,6 +52,7 @@ const testCompleteButton = document.querySelector(
 const textCompleteTitle = document.querySelector(
   ".test-complete-title",
 ) as HTMLHeadingElement;
+const confetti = document.querySelector(".confetti") as HTMLImageElement;
 type difficultyType = "easy" | "medium" | "hard";
 let currentIndex = 0;
 let testDuration = 60;
@@ -51,6 +60,8 @@ let difficulty: difficultyType = "medium";
 let mode = "timed";
 let elapsed: number;
 let timerInterval: number;
+let testStared = false;
+let isFocusedOnText = false;
 difficultyInput.addEventListener("change", (e) => {
   setDifficulty(e);
 });
@@ -93,12 +104,29 @@ function generateRandomText(difficulty: difficultyType) {
 }
 
 startButton.addEventListener("click", startTest);
+
 restartButton.addEventListener("click", restartTest);
-testCompleteButton.addEventListener('click', restartTest);
+document.addEventListener("click", (e) => {
+  const clickedElement = e.target as HTMLElement;
+  if (
+    textContainer.contains(clickedElement) ||
+    textContainer === clickedElement
+  ) {
+    isFocusedOnText = true;
+  } else {
+    isFocusedOnText = false;
+  }
+});
+document.addEventListener("keydown", (e) => {
+  if (isFocusedOnText && !testStared) {
+    startTest();
+  }
+});
+testCompleteButton.addEventListener("click", restartTest);
 
 function startTest() {
   currentIndex = 0;
-
+  testStared = true;
   // ce trebuie sa se intample cand utilizatorul apasa pe butonul de start:
   // dispare butonul si overlay-ul care cauza blur🏗️
   // pentru asta trebuie sa am o interfata suprapusa cu textul care are un buton de start si un fundal cu blur ✅
@@ -150,6 +178,9 @@ function restartTest() {
   testCompleteModal.style.display = "none";
   restartButton.style.display = "none";
   document.removeEventListener("keydown", moveCursor);
+  confetti.style.display = "none";
+  timeRemainingContainer.textContent = `${String(testDuration)}s`;
+
   generateRandomTest();
 }
 
@@ -204,22 +235,20 @@ function moveCursor(e: KeyboardEvent) {
 function endTest(elapsed: number) {
   clearInterval(timerInterval);
   handleInputs(false);
-  const { correctChars, incorrectChars } = getTestStats();
+  const { WPM, accuracy, correctChars, incorrectChars } = getTestStats();
+  const storage = JSON.parse(window.localStorage.getItem("history")!) || [];
 
-  let accuracy = `${Math.round((correctChars.length / (correctChars.length + incorrectChars.length)) * 100)}%`;
-  let wordsTyped = correctChars.length / 5;
-  let WPM = Math.floor(wordsTyped / (elapsed / 60));
-  restartButton.style.display = 'none';
+  restartButton.style.display = "none";
   wpmContainer.forEach((container) => {
     container.textContent = String(WPM);
   });
   accuracyContainer.forEach((container) => {
+    container.classList.remove("good", "bad", "medium");
     container.textContent = accuracy;
     const accNumber = Math.round(
-      (correctChars.length / (correctChars.length + incorrectChars.length)) *
-        100,
+      (correctChars / (correctChars + incorrectChars)) * 100,
     );
-    
+
     switch (true) {
       case accNumber > 90:
         container.classList.add("good");
@@ -234,13 +263,26 @@ function endTest(elapsed: number) {
         return;
     }
   });
-
-  correctCharContainer.textContent = String(correctChars.length);
+  if (storage !== null && storage.length > 0) {
+    storage.map((record: StorageRecord) => {
+      if (record.WPM < WPM) {
+        textCompleteTitle.textContent = "High Score Smashed!";
+        confetti.style.display = "flex";
+      } else {
+        textCompleteTitle.textContent = "Test Complete!";
+        confetti.style.display = "none";
+      }
+    });
+  } else {
+    textCompleteTitle.textContent = "Baseline established!";
+  }
+  correctCharContainer.textContent = String(correctChars);
   correctCharContainer.classList.add("good");
-  incorrectCharContainer.textContent = String(incorrectChars.length);
+  incorrectCharContainer.textContent = String(incorrectChars);
   incorrectCharContainer.classList.add("bad");
   textContainer.classList.add("inactive");
   testCompleteModal.style.display = "flex";
+  saveScoreToStorage();
 }
 
 function handleInputs(isDisabled: boolean) {
@@ -253,10 +295,14 @@ function handleInputs(isDisabled: boolean) {
 
 function getTestStats() {
   const totalChars = document.querySelectorAll<HTMLSpanElement>(".input-char");
-  const correctChars = document.querySelectorAll<HTMLSpanElement>(".correct");
+  const correctChars =
+    document.querySelectorAll<HTMLSpanElement>(".correct").length;
   const incorrectChars =
-    document.querySelectorAll<HTMLSpanElement>(".incorrect");
-  return { totalChars, correctChars, incorrectChars };
+    document.querySelectorAll<HTMLSpanElement>(".incorrect").length;
+  let accuracy = `${Math.round((correctChars / (correctChars + incorrectChars)) * 100)}%`;
+  let wordsTyped = correctChars / 5;
+  let WPM = Math.floor(wordsTyped / (elapsed / 60));
+  return { WPM, accuracy, totalChars, correctChars, incorrectChars };
 }
 
 function generateRandomTest() {
@@ -269,4 +315,30 @@ function generateRandomTest() {
     ];
 
   textContainer.innerHTML = transformData(randomText!.text);
+}
+
+function saveScoreToStorage() {
+  const { WPM, accuracy, correctChars, incorrectChars } = getTestStats();
+  let storage = JSON.parse(window.localStorage.getItem("history")!) || [];
+  console.log(storage);
+  if (storage === null || storage.length === 0) {
+    storage.push({
+      date: new Date(),
+      name: "baseline",
+      WPM,
+      accuracy,
+      correctChars,
+      incorrectChars,
+    });
+  } else {
+    storage.push({
+      date: new Date(),
+      name: "new-entry",
+      WPM,
+      accuracy,
+      correctChars,
+      incorrectChars,
+    });
+  }
+  localStorage.setItem("history", JSON.stringify(storage));
 }
