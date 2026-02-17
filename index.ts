@@ -56,8 +56,12 @@ const textCompleteTitle = document.querySelector(
 const historyTableBody = document.querySelector(
   ".history-table-body",
 ) as HTMLTableElement;
-const personalBestContainer = document.querySelector('.personal-best') as HTMLSpanElement;
-const deleteHistoryBtn = document.querySelector('.delete-history-btn') as HTMLButtonElement;
+const personalBestContainer = document.querySelector(
+  ".personal-best",
+) as HTMLSpanElement;
+const deleteHistoryBtn = document.querySelector(
+  ".delete-history-btn",
+) as HTMLButtonElement;
 const confetti = document.querySelector(".confetti") as HTMLImageElement;
 
 const toggleHistoryBtns = document.querySelectorAll(
@@ -98,26 +102,6 @@ toggleHistoryBtns.forEach((button) => {
   button.addEventListener("click", openHistory);
 });
 
-function setDifficulty(e: Event) {
-  const target = e.target as HTMLInputElement;
-  difficulty = target.value as difficultyType;
-  const newText = generateRandomText(difficulty);
-  textContainer.innerHTML = transformData(newText!.text);
-}
-
-function setMode(mode: string) {}
-
-function transformData(data: string) {
-  return data
-    .split("")
-    .map((char) => `<span class="input-char">${char}</span>`)
-    .join("");
-}
-
-function generateRandomText(difficulty: difficultyType) {
-  return data[difficulty][Math.floor(Math.random() * 10)];
-}
-
 startButton.addEventListener("click", startTest);
 
 restartButton.addEventListener("click", restartTest);
@@ -138,7 +122,7 @@ document.addEventListener("keydown", (e) => {
   }
 });
 testCompleteButton.addEventListener("click", restartTest);
-deleteHistoryBtn.addEventListener('click', deleteHistory)
+deleteHistoryBtn.addEventListener("click", deleteHistory);
 function startTest() {
   currentIndex = 0;
   testStared = true;
@@ -349,7 +333,13 @@ function saveScoreToStorage() {
   console.log(storage);
   if (storage === null || storage.length === 0) {
     storage.push({
-      date: new Date(Date.now()).toLocaleDateString("ro-Ro", {day: '2-digit', month:'2-digit', year:'numeric',hour: "2-digit",minute: "2-digit"}),
+      date: new Date(Date.now()).toLocaleDateString("ro-Ro", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
       name: "baseline",
       WPM,
       accuracy,
@@ -358,7 +348,13 @@ function saveScoreToStorage() {
     });
   } else {
     storage.push({
-      date: new Date(Date.now()).toLocaleDateString("ro-Ro", {day: '2-digit', month:'2-digit', year:'numeric',hour: "2-digit",minute: "2-digit"}),
+      date: new Date(Date.now()).toLocaleDateString("ro-Ro", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
       name: "new-entry",
       WPM,
       accuracy,
@@ -378,33 +374,54 @@ function openHistory() {
 function populateHistory() {
   const rawData = window.localStorage.getItem("history");
   const storage = rawData ? JSON.parse(rawData) : [];
-  const personalBest = Math.max(...storage.map((test:StorageRecord) => test.WPM))
-  historyTableBody.innerHTML = storage.map((item: StorageRecord) => {
-    
-    return `<tr>
+  const personalBest = Math.max(
+    ...storage.map((test: StorageRecord) => test.WPM),
+  );
+  historyTableBody.innerHTML = storage
+    .map((item: StorageRecord) => {
+      return `<tr>
             <td>${item.date}</td>
             <td>${item.WPM}</td>
             <td>${item.accuracy}</td>
             <td>${item.correctChars}/ ${item.incorrectChars}</td>
-            <td>${personalBest === item.WPM ? '<img src="../assets/images/icon-personal-best.svg" />' : ''}</td>
+            <td>${personalBest === item.WPM ? '<img src="../assets/images/icon-personal-best.svg" />' : ""}</td>
           </tr>`;
-  }).join("");
+    })
+    .join("");
 }
 
-function deleteHistory(){
-  window.localStorage.removeItem('history');
+function deleteHistory() {
+  window.localStorage.removeItem("history");
   populateHistory();
 }
 
-function establishPersonalRecord(){
-  const rawData = window.localStorage.getItem('history');
+function establishPersonalRecord() {
+  const rawData = window.localStorage.getItem("history");
   const storageData = rawData ? JSON.parse(rawData) : [];
   let personalBestWPM: string | number = "--";
-  if(storageData.length > 0){
-      personalBestWPM = Math.max(...storageData.map((test:StorageRecord) => test.WPM))
+  if (storageData.length > 0) {
+    personalBestWPM = Math.max(
+      ...storageData.map((test: StorageRecord) => test.WPM),
+    );
   }
   personalBestContainer.textContent = String(personalBestWPM);
-  
+}
+function setDifficulty(e: Event) {
+  const target = e.target as HTMLInputElement;
+  difficulty = target.value as difficultyType;
+  const newText = generateRandomText(difficulty);
+  textContainer.innerHTML = transformData(newText!.text);
 }
 
+function setMode(mode: string) {}
 
+function transformData(data: string) {
+  return data
+    .split("")
+    .map((char) => `<span class="input-char">${char}</span>`)
+    .join("");
+}
+
+function generateRandomText(difficulty: difficultyType) {
+  return data[difficulty][Math.floor(Math.random() * 10)];
+}
