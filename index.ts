@@ -1,6 +1,7 @@
 import { data } from "./data.js";
 
 type StorageRecord = {
+  date: Date;
   name: string;
   WPM: number;
   accuracy: string;
@@ -52,7 +53,15 @@ const testCompleteButton = document.querySelector(
 const textCompleteTitle = document.querySelector(
   ".test-complete-title",
 ) as HTMLHeadingElement;
+const historyTableBody = document.querySelector(
+  ".history-table-body",
+) as HTMLTableElement;
+const deleteHistoryBtn = document.querySelector('.delete-history-btn') as HTMLButtonElement;
 const confetti = document.querySelector(".confetti") as HTMLImageElement;
+
+const toggleHistoryBtns = document.querySelectorAll(
+  ".toggle-history-btn",
+) as NodeListOf<HTMLButtonElement>;
 type difficultyType = "easy" | "medium" | "hard";
 let currentIndex = 0;
 let testDuration = 60;
@@ -81,6 +90,10 @@ modeInputMobile.addEventListener("change", (e) => {
 
 document.addEventListener("DOMContentLoaded", () => {
   generateRandomTest();
+  populateHistory();
+});
+toggleHistoryBtns.forEach((button) => {
+  button.addEventListener("click", openHistory);
 });
 
 function setDifficulty(e: Event) {
@@ -123,7 +136,7 @@ document.addEventListener("keydown", (e) => {
   }
 });
 testCompleteButton.addEventListener("click", restartTest);
-
+deleteHistoryBtn.addEventListener('click', deleteHistory)
 function startTest() {
   currentIndex = 0;
   testStared = true;
@@ -179,6 +192,9 @@ function restartTest() {
   restartButton.style.display = "none";
   document.removeEventListener("keydown", moveCursor);
   confetti.style.display = "none";
+  const toggleHistoryBtns = document.querySelectorAll(
+    ".toggle-history-btn",
+  ) as NodeListOf<HTMLButtonElement>;
   timeRemainingContainer.textContent = `${String(testDuration)}s`;
 
   generateRandomTest();
@@ -242,6 +258,9 @@ function endTest(elapsed: number) {
   wpmContainer.forEach((container) => {
     container.textContent = String(WPM);
   });
+  toggleHistoryBtns.forEach((button) => {
+    button.addEventListener("click", openHistory);
+  });
   accuracyContainer.forEach((container) => {
     container.classList.remove("good", "bad", "medium");
     container.textContent = accuracy;
@@ -283,6 +302,7 @@ function endTest(elapsed: number) {
   textContainer.classList.add("inactive");
   testCompleteModal.style.display = "flex";
   saveScoreToStorage();
+  populateHistory();
 }
 
 function handleInputs(isDisabled: boolean) {
@@ -291,6 +311,9 @@ function handleInputs(isDisabled: boolean) {
   difficultyInputMobile.disabled = isDisabled;
   modeInput.disabled = isDisabled;
   modeInputMobile.disabled = isDisabled;
+  toggleHistoryBtns.forEach((button) => {
+    button.disabled = isDisabled;
+  });
 }
 
 function getTestStats() {
@@ -323,7 +346,7 @@ function saveScoreToStorage() {
   console.log(storage);
   if (storage === null || storage.length === 0) {
     storage.push({
-      date: new Date(),
+      date: new Date(Date.now()).toLocaleDateString("ro-Ro", {day: '2-digit', month:'2-digit', year:'numeric',hour: "2-digit",minute: "2-digit"}),
       name: "baseline",
       WPM,
       accuracy,
@@ -332,7 +355,7 @@ function saveScoreToStorage() {
     });
   } else {
     storage.push({
-      date: new Date(),
+      date: new Date(Date.now()).toLocaleDateString("ro-Ro", {day: '2-digit', month:'2-digit', year:'numeric',hour: "2-digit",minute: "2-digit"}),
       name: "new-entry",
       WPM,
       accuracy,
@@ -342,3 +365,29 @@ function saveScoreToStorage() {
   }
   localStorage.setItem("history", JSON.stringify(storage));
 }
+
+function openHistory() {
+  const historyTab = document.querySelector(".test-history") as HTMLDivElement;
+
+  historyTab.classList.toggle("show");
+}
+
+function populateHistory() {
+  const rawData = window.localStorage.getItem("history");
+  const storage = rawData ? JSON.parse(rawData) : [];
+  historyTableBody.innerHTML = storage.map((item: StorageRecord) => {
+    return `<tr>
+            <td>${item.date}</td>
+            <td>${item.WPM}</td>
+            <td>${item.accuracy}</td>
+            <td>${item.correctChars}/ ${item.incorrectChars}</td>
+            <td></td>
+          </tr>`;
+  }).join("");
+}
+
+function deleteHistory(){
+  window.localStorage.removeItem('history');
+  populateHistory();
+}
+

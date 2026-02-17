@@ -339,6 +339,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-x: hidden;
 }
 p {
   color: var(--neutral-400);
@@ -391,6 +392,7 @@ fieldset {
 }
 .personal-best-container {
   display: flex;
+  align-items: center;
   gap: 10px;
 }
 .shake {
@@ -515,6 +517,7 @@ input[type="radio"]:focus + label {
   color:red;
 }
 .restart-btn{
+  z-index: 5;
   background-color: var(--neutral-800);
   color:white;
   display:none;
@@ -526,6 +529,7 @@ input[type="radio"]:focus + label {
   transition: all .25s ease-in-out;
 }
 .test-complete-btn{
+  z-index: 5;
   background-color: var(--neutral-800);
   color:var(--neutral-0);
   display:flex;
@@ -599,6 +603,47 @@ input[type="radio"]:focus + label {
 .medium{
   color:var(--yellow-400);
 }
+.test-history{
+  transform: translate(100%);
+  transition: all 250ms ease-in-out;
+  width: 100%;
+  height: 100%;
+  padding:1rem 1rem 2rem;
+  position: absolute;
+  right:0;
+  background-color: var(--neutral-800);
+  color:var(--neutral-400);
+  max-width: 400px;
+}
+.test-history.show{
+  transform: translate(0);
+}
+.button-container{
+  margin-bottom:2rem;
+}
+
+.btn-white{
+background:var(--neutral-0);
+  padding:.5rem 1rem;
+  border-radius: 10px;
+  border:none;
+  color:var(--neutral-900);
+  
+  cursor:pointer;
+}
+.close-img{
+  width: 20px;
+}
+.toggle-history-btn:hover{
+  
+}
+.history-table{
+  width: 100%;
+  border-bottom: 1px solid hsla(240, 1%, 59%, 0.5);
+  text-align:left;
+  font-size:14px;
+}
+
 /* Media queries */
 @keyframes blip {
   0%{
