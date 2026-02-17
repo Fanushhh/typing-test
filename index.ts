@@ -56,6 +56,7 @@ const textCompleteTitle = document.querySelector(
 const historyTableBody = document.querySelector(
   ".history-table-body",
 ) as HTMLTableElement;
+const personalBestContainer = document.querySelector('.personal-best') as HTMLSpanElement;
 const deleteHistoryBtn = document.querySelector('.delete-history-btn') as HTMLButtonElement;
 const confetti = document.querySelector(".confetti") as HTMLImageElement;
 
@@ -91,6 +92,7 @@ modeInputMobile.addEventListener("change", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
   generateRandomTest();
   populateHistory();
+  establishPersonalRecord();
 });
 toggleHistoryBtns.forEach((button) => {
   button.addEventListener("click", openHistory);
@@ -302,6 +304,7 @@ function endTest(elapsed: number) {
   textContainer.classList.add("inactive");
   testCompleteModal.style.display = "flex";
   saveScoreToStorage();
+  establishPersonalRecord();
   populateHistory();
 }
 
@@ -375,13 +378,15 @@ function openHistory() {
 function populateHistory() {
   const rawData = window.localStorage.getItem("history");
   const storage = rawData ? JSON.parse(rawData) : [];
+  const personalBest = Math.max(...storage.map((test:StorageRecord) => test.WPM))
   historyTableBody.innerHTML = storage.map((item: StorageRecord) => {
+    
     return `<tr>
             <td>${item.date}</td>
             <td>${item.WPM}</td>
             <td>${item.accuracy}</td>
             <td>${item.correctChars}/ ${item.incorrectChars}</td>
-            <td></td>
+            <td>${personalBest === item.WPM ? '<img src="../assets/images/icon-personal-best.svg" />' : ''}</td>
           </tr>`;
   }).join("");
 }
@@ -390,4 +395,16 @@ function deleteHistory(){
   window.localStorage.removeItem('history');
   populateHistory();
 }
+
+function establishPersonalRecord(){
+  const rawData = window.localStorage.getItem('history');
+  const storageData = rawData ? JSON.parse(rawData) : [];
+  let personalBestWPM: string | number = "--";
+  if(storageData.length > 0){
+      personalBestWPM = Math.max(...storageData.map((test:StorageRecord) => test.WPM))
+  }
+  personalBestContainer.textContent = String(personalBestWPM);
+  
+}
+
 

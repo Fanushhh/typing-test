@@ -639,9 +639,21 @@ background:var(--neutral-0);
 }
 .history-table{
   width: 100%;
-  border-bottom: 1px solid hsla(240, 1%, 59%, 0.5);
+  
   text-align:left;
   font-size:14px;
+}
+.history-table thead{
+  border-bottom: 1px solid hsla(240, 1%, 59%, 0.5);
+}
+
+.history-table td{
+  padding: .5rem 0;
+  border-collapse:separate;
+  
+}
+.history-table td img{
+  width:15px;
 }
 
 /* Media queries */
