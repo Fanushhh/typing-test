@@ -63,10 +63,14 @@ const deleteHistoryBtn = document.querySelector(
   ".delete-history-btn",
 ) as HTMLButtonElement;
 const confetti = document.querySelector(".confetti") as HTMLImageElement;
-
+const testCompleteImage = document.querySelector(
+  ".test-complete-img",
+) as HTMLImageElement;
 const toggleHistoryBtns = document.querySelectorAll(
   ".toggle-history-btn",
 ) as NodeListOf<HTMLButtonElement>;
+const shareBtn = document.querySelector('.share-results-btn') as HTMLButtonElement;
+
 type difficultyType = "easy" | "medium" | "hard";
 let currentIndex = 0;
 let testDuration = 60;
@@ -105,6 +109,7 @@ toggleHistoryBtns.forEach((button) => {
 startButton.addEventListener("click", startTest);
 
 restartButton.addEventListener("click", restartTest);
+shareBtn.addEventListener('click', shareScore)
 document.addEventListener("click", (e) => {
   const clickedElement = e.target as HTMLElement;
   if (
@@ -167,6 +172,7 @@ function startTest() {
 function restartTest() {
   clearInterval(timerInterval);
   handleInputs(false);
+  testStared = false;
   startButtonContainer.style.display = "block";
   currentIndex = 0;
   textContainer.classList.add("inactive");
@@ -184,6 +190,10 @@ function restartTest() {
   timeRemainingContainer.textContent = `${String(testDuration)}s`;
 
   generateRandomTest();
+  document.addEventListener("keydown", (e) => {
+  if (isFocusedOnText && !testStared) {
+    startTest();
+  }})
 }
 
 function moveCursor(e: KeyboardEvent) {
@@ -239,7 +249,9 @@ function endTest(elapsed: number) {
   handleInputs(false);
   const { WPM, accuracy, correctChars, incorrectChars } = getTestStats();
   const storage = JSON.parse(window.localStorage.getItem("history")!) || [];
-
+  const personalRecord = Math.max(
+    ...storage.map((item: StorageRecord) => item.WPM),
+  );
   restartButton.style.display = "none";
   wpmContainer.forEach((container) => {
     container.textContent = String(WPM);
@@ -269,15 +281,15 @@ function endTest(elapsed: number) {
     }
   });
   if (storage !== null && storage.length > 0) {
-    storage.map((record: StorageRecord) => {
-      if (record.WPM < WPM) {
-        textCompleteTitle.textContent = "High Score Smashed!";
-        confetti.style.display = "flex";
-      } else {
-        textCompleteTitle.textContent = "Test Complete!";
-        confetti.style.display = "none";
-      }
-    });
+    if (personalRecord < WPM) {
+      testCompleteImage.src = "./assets/images/icon-new-pb.svg";
+      textCompleteTitle.textContent = "High Score Smashed!";
+      confetti.style.display = "flex";
+    } else {
+      testCompleteImage.src = "./assets/images/icon-completed.svg";
+      textCompleteTitle.textContent = "Test Complete!";
+      confetti.style.display = "none";
+    }
   } else {
     textCompleteTitle.textContent = "Baseline established!";
   }
@@ -393,6 +405,8 @@ function populateHistory() {
 function deleteHistory() {
   window.localStorage.removeItem("history");
   populateHistory();
+
+  establishPersonalRecord();
 }
 
 function establishPersonalRecord() {
@@ -424,4 +438,19 @@ function transformData(data: string) {
 
 function generateRandomText(difficulty: difficultyType) {
   return data[difficulty][Math.floor(Math.random() * 10)];
+}
+
+function shareScore() {
+  const { WPM, accuracy } = getTestStats();
+  const text = `
+  ⌨️ I just took a typing test!
+
+⚡ Speed: ${WPM} WPM
+🎯 Accuracy: ${accuracy}%
+⏱️ Time: ${testDuration}
+
+Try it yourself:
+https://typing-test0121.netlify.app/
+`;
+  navigator.clipboard.writeText(text);
 }

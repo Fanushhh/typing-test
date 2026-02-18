@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Typing test challenge</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -42,7 +42,7 @@
             ><span class="personal-best">--</span> WPM</span
           >
         </p>
-        <button class="toggle-history-btn btn-white">See history</button>
+        <button class="toggle-history-btn btn">See history</button>
       </div>
     </header>
     <main class="main-container">
@@ -84,7 +84,7 @@
                   value="easy"
                   aria-label="Easy difficulty"
                 />
-                <label for="easy">easy</label>
+                <label class="btn" for="easy">easy</label>
               </div>
               <div class="button">
                 <input
@@ -95,7 +95,7 @@
                   value="medium"
                   aria-label="Medium difficulty"
                 />
-                <label for="medium">medium</label>
+                <label class="btn" for="medium">medium</label>
               </div>
               <div class="button">
                 <input
@@ -105,7 +105,7 @@
                   value="hard"
                   aria-label="Hard difficulty"
                 />
-                <label for="hard">hard</label>
+                <label class="btn" for="hard">hard</label>
               </div>
             </div>
           </fieldset>
@@ -122,7 +122,7 @@
                   id="timed"
                   aria-label="Timed mode 60 seconds"
                 />
-                <label for="timed">timed (60s)</label>
+                <label class="btn" for="timed">timed (60s)</label>
               </div>
               <div class="button">
                 <input
@@ -132,7 +132,7 @@
                   id="passage"
                   aria-label="Passage mode"
                 />
-                <label for="passage">passage</label>
+                <label class="btn" for="passage">passage</label>
               </div>
             </div>
           </fieldset>
@@ -189,9 +189,14 @@
             </p>
           </div>
         </div>
-        <button class="test-complete-btn">
-          Go again <img src="./assets/images/icon-restart.svg" />
-        </button>
+        <div class="button-container">
+          <button class="test-complete-btn">
+            Go again <img src="./assets/images/icon-restart.svg" />
+          </button>
+          <button class="share-results-btn btn-white">
+             Share <img src="./assets/images/share.png" />
+          </button>
+        </div>
       </section>
     </main>
     <div class="test-history">
@@ -213,11 +218,11 @@
             <th>PR</th>
           </tr>
         </thead>
-          
-        
+
         <tbody class="history-table-body"></tbody>
       </table>
     </div>
+    
     <footer>
       <button class="restart-btn">
         <img src="./assets/images/icon-restart.svg" />Restart Test
