@@ -112,7 +112,7 @@ document.addEventListener("click", (e) => {
     isFocusedOnText = false;
   }
 });
-document.addEventListener("keydown", handleKeydown);
+
 
 toggleHistoryBtns.forEach((button) => {
   button.addEventListener("click", openHistory);
@@ -125,11 +125,9 @@ shareBtn.addEventListener('click', shareScore)
 
 testCompleteButton.addEventListener("click", restartTest);
 deleteHistoryBtn.addEventListener("click", deleteHistory);
-
+document.addEventListener("keydown", handleKeydown);
 
 function startTest() {
-  document.removeEventListener('keydown', moveCursor)
-  document.removeEventListener('keydown', handleKeydown)
   currentIndex = 0;
   testStarted = true;
   // ce trebuie sa se intample cand utilizatorul apasa pe butonul de start:
@@ -167,12 +165,9 @@ function startTest() {
       timeRemainingContainer.textContent = `${elapsed.toFixed(1)}s`;
     }
   }, 100);
-  document.addEventListener("keydown", moveCursor);
 }
 
 function restartTest() {
-  document.removeEventListener('keydown', handleKeydown)
-  document.removeEventListener('keydown', moveCursor)
   clearInterval(timerInterval);
   handleInputs(false);
   testStarted = false;
@@ -185,16 +180,18 @@ function restartTest() {
   );
   testCompleteModal.style.display = "none";
   restartButton.style.display = "none";
-  document.removeEventListener("keydown", handleKeydown);
+  
   confetti.style.display = "none";
   
   timeRemainingContainer.textContent = `${String(testDuration)}s`;
 
   generateRandomTest();
-  document.addEventListener("keydown", handleKeydown)
 }
 function handleKeydown(e: KeyboardEvent) {
-  if (isFocusedOnText && !testStarted) {
+  if(testStarted){
+    moveCursor(e);
+  }
+  else if(isFocusedOnText) {
     startTest();
   }
 }
@@ -242,7 +239,7 @@ function moveCursor(e: KeyboardEvent) {
   // Add cursor to next character (if exists)
   if (currentIndex < charSpans.length) {
     charSpans[currentIndex]?.classList.add("cursor-at");
-  } else {
+  } else if(testStarted) {
     endTest(elapsed);
   }
 }
@@ -251,8 +248,8 @@ function endTest(elapsed: number) {
   clearInterval(timerInterval);
   handleInputs(false);
   const { WPM, accuracy, correctChars, incorrectChars } = getTestStats();
-  const raw = window.localStorage.getItem('history');
-  const storage = raw ? JSON.parse(raw) : []
+  
+  const storage = getStorageData();
   const personalRecord = Math.max(
     ...storage.map((item: StorageRecord) => item.WPM),
   ) || 0;
@@ -345,17 +342,11 @@ function generateRandomTest() {
 
 function saveScoreToStorage() {
   const { WPM, accuracy, correctChars, incorrectChars } = getTestStats();
-  let raw = window.localStorage.getItem("history");
-  const storage = raw ? JSON.parse(raw) : [];
+  
+  const storage = getStorageData();
   if (storage.length === 0) {
     storage.push({
-      date: new Date(Date.now()).toLocaleDateString("ro-Ro", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      date: new Date(Date.now()),
       name: "baseline",
       WPM,
       accuracy,
@@ -364,13 +355,7 @@ function saveScoreToStorage() {
     });
   } else {
     storage.push({
-      date: new Date(Date.now()).toLocaleDateString("ro-Ro", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      date: new Date(Date.now()),
       name: "new-entry",
       WPM,
       accuracy,
@@ -388,15 +373,15 @@ function openHistory() {
 }
 
 function populateHistory() {
-  const rawData = window.localStorage.getItem("history");
-  const storage = rawData ? JSON.parse(rawData) : [];
+  
+  const storage = getStorageData()
   const personalBest = Math.max(
     ...storage.map((test: StorageRecord) => test.WPM),
   );
   historyTableBody.innerHTML = storage
     .map((item: StorageRecord) => {
       return `<tr>
-            <td>${item.date}</td>
+            <td>${new Date(item.date).toLocaleDateString('ro-RO', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'})}</td>
             <td>${item.WPM}</td>
             <td>${item.accuracy}</td>
             <td>${item.correctChars}/ ${item.incorrectChars}</td>
@@ -414,8 +399,7 @@ function deleteHistory() {
 }
 
 function establishPersonalRecord() {
-  const rawData = window.localStorage.getItem("history");
-  const storageData = rawData ? JSON.parse(rawData) : [];
+  const storageData = getStorageData();
   let personalBestWPM: string | number = "--";
   if (storageData.length > 0) {
     personalBestWPM = Math.max(
@@ -455,4 +439,25 @@ Try it yourself:
 https://typing-test0121.netlify.app/
 `;
   navigator.clipboard.writeText(text);
+}
+
+function getStorageData(){
+  const raw = window.localStorage.getItem('history');
+
+let storage: StorageRecord[] = [];
+
+try {
+  const parsed = raw ? JSON.parse(raw) : [];
+  // Validate parsed data is an array
+  if (Array.isArray(parsed)) {
+    // Filter items to ensure they have a numeric WPM property
+    storage = parsed.filter(
+      (item) => item && typeof item.WPM === 'number'
+    );
+  }
+} catch {
+  // If JSON.parse fails, fallback to empty array
+  storage = [];
+}
+return storage;
 }
