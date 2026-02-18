@@ -534,6 +534,7 @@ input[type="radio"]:focus + label {
 }
 .incorrect{
   color:red;
+  text-decoration: underline;
 }
 .restart-btn{
   z-index: 5;
