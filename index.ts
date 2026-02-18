@@ -123,6 +123,7 @@ document.addEventListener("keydown", handleKeydown);
 testCompleteButton.addEventListener("click", restartTest);
 deleteHistoryBtn.addEventListener("click", deleteHistory);
 function startTest() {
+  document.removeEventListener('keydown', moveCursor)
   currentIndex = 0;
   testStarted = true;
   // ce trebuie sa se intample cand utilizatorul apasa pe butonul de start:
@@ -243,7 +244,8 @@ function endTest(elapsed: number) {
   clearInterval(timerInterval);
   handleInputs(false);
   const { WPM, accuracy, correctChars, incorrectChars } = getTestStats();
-  const storage = JSON.parse(window.localStorage.getItem("history")!) || [];
+  const raw = window.localStorage.getItem('history');
+  const storage = raw ? JSON.parse(raw) : []
   const personalRecord = Math.max(
     ...storage.map((item: StorageRecord) => item.WPM),
   );
@@ -251,9 +253,7 @@ function endTest(elapsed: number) {
   wpmContainer.forEach((container) => {
     container.textContent = String(WPM);
   });
-  toggleHistoryBtns.forEach((button) => {
-    button.addEventListener("click", openHistory);
-  });
+  
   accuracyContainer.forEach((container) => {
     container.classList.remove("good", "bad", "medium");
     container.textContent = accuracy;
@@ -316,9 +316,11 @@ function getTestStats() {
     document.querySelectorAll<HTMLSpanElement>(".correct").length;
   const incorrectChars =
     document.querySelectorAll<HTMLSpanElement>(".incorrect").length;
-  let accuracy = `${Math.round((correctChars / (correctChars + incorrectChars)) * 100)}%`;
+  let accuracy = totalChars.length === 0 
+  ? '0%' 
+  : `${Math.round((correctChars / totalChars.length) * 100)}%`;
   let wordsTyped = correctChars / 5;
-  let WPM = Math.floor(wordsTyped / (elapsed / 60));
+  let WPM = (elapsed > 0 && wordsTyped > 0) ? Math.floor(wordsTyped / (elapsed / 60)) : 0;
   return { WPM, accuracy, totalChars, correctChars, incorrectChars };
 }
 
