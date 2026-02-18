@@ -129,6 +129,7 @@ deleteHistoryBtn.addEventListener("click", deleteHistory);
 
 function startTest() {
   document.removeEventListener('keydown', moveCursor)
+  document.removeEventListener('keydown', handleKeydown)
   currentIndex = 0;
   testStarted = true;
   // ce trebuie sa se intample cand utilizatorul apasa pe butonul de start:
@@ -171,6 +172,7 @@ function startTest() {
 
 function restartTest() {
   document.removeEventListener('keydown', handleKeydown)
+  document.removeEventListener('keydown', moveCursor)
   clearInterval(timerInterval);
   handleInputs(false);
   testStarted = false;
@@ -253,7 +255,7 @@ function endTest(elapsed: number) {
   const storage = raw ? JSON.parse(raw) : []
   const personalRecord = Math.max(
     ...storage.map((item: StorageRecord) => item.WPM),
-  );
+  ) || 0;
   restartButton.style.display = "none";
   wpmContainer.forEach((container) => {
     container.textContent = String(WPM);
