@@ -78,7 +78,7 @@ let difficulty: difficultyType = "medium";
 let mode = "timed";
 let elapsed: number;
 let timerInterval: number;
-let testStared = false;
+let testStarted = false;
 let isFocusedOnText = false;
 difficultyInput.addEventListener("change", (e) => {
   setDifficulty(e);
@@ -89,12 +89,10 @@ difficultyInputMobile.addEventListener("change", (e) => {
 modeInput.addEventListener("change", (e) => {
   const target = e.target as HTMLInputElement;
   mode = target.value;
-  setMode(mode);
 });
 modeInputMobile.addEventListener("change", (e) => {
   const target = e.target as HTMLInputElement;
   mode = target.value;
-  setMode(mode);
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -121,16 +119,12 @@ document.addEventListener("click", (e) => {
     isFocusedOnText = false;
   }
 });
-document.addEventListener("keydown", (e) => {
-  if (isFocusedOnText && !testStared) {
-    startTest();
-  }
-});
+document.addEventListener("keydown", handleKeydown);
 testCompleteButton.addEventListener("click", restartTest);
 deleteHistoryBtn.addEventListener("click", deleteHistory);
 function startTest() {
   currentIndex = 0;
-  testStared = true;
+  testStarted = true;
   // ce trebuie sa se intample cand utilizatorul apasa pe butonul de start:
   // dispare butonul si overlay-ul care cauza blur🏗️
   // pentru asta trebuie sa am o interfata suprapusa cu textul care are un buton de start si un fundal cu blur ✅
@@ -170,9 +164,10 @@ function startTest() {
 }
 
 function restartTest() {
+  document.removeEventListener('keydown', handleKeydown)
   clearInterval(timerInterval);
   handleInputs(false);
-  testStared = false;
+  testStarted = false;
   startButtonContainer.style.display = "block";
   currentIndex = 0;
   textContainer.classList.add("inactive");
@@ -184,16 +179,16 @@ function restartTest() {
   restartButton.style.display = "none";
   document.removeEventListener("keydown", moveCursor);
   confetti.style.display = "none";
-  const toggleHistoryBtns = document.querySelectorAll(
-    ".toggle-history-btn",
-  ) as NodeListOf<HTMLButtonElement>;
+  
   timeRemainingContainer.textContent = `${String(testDuration)}s`;
 
   generateRandomTest();
-  document.addEventListener("keydown", (e) => {
-  if (isFocusedOnText && !testStared) {
+  document.addEventListener("keydown", handleKeydown)
+}
+function handleKeydown(e: KeyboardEvent) {
+  if (isFocusedOnText && !testStarted) {
     startTest();
-  }})
+  }
 }
 
 function moveCursor(e: KeyboardEvent) {
@@ -426,8 +421,6 @@ function setDifficulty(e: Event) {
   const newText = generateRandomText(difficulty);
   textContainer.innerHTML = transformData(newText!.text);
 }
-
-function setMode(mode: string) {}
 
 function transformData(data: string) {
   return data
