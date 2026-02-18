@@ -80,6 +80,7 @@ let elapsed: number;
 let timerInterval: number;
 let testStarted = false;
 let isFocusedOnText = false;
+
 difficultyInput.addEventListener("change", (e) => {
   setDifficulty(e);
 });
@@ -100,14 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
   populateHistory();
   establishPersonalRecord();
 });
-toggleHistoryBtns.forEach((button) => {
-  button.addEventListener("click", openHistory);
-});
-
-startButton.addEventListener("click", startTest);
-
-restartButton.addEventListener("click", restartTest);
-shareBtn.addEventListener('click', shareScore)
 document.addEventListener("click", (e) => {
   const clickedElement = e.target as HTMLElement;
   if (
@@ -120,8 +113,20 @@ document.addEventListener("click", (e) => {
   }
 });
 document.addEventListener("keydown", handleKeydown);
+
+toggleHistoryBtns.forEach((button) => {
+  button.addEventListener("click", openHistory);
+});
+
+startButton.addEventListener("click", startTest);
+
+restartButton.addEventListener("click", restartTest);
+shareBtn.addEventListener('click', shareScore)
+
 testCompleteButton.addEventListener("click", restartTest);
 deleteHistoryBtn.addEventListener("click", deleteHistory);
+
+
 function startTest() {
   document.removeEventListener('keydown', moveCursor)
   currentIndex = 0;
@@ -178,7 +183,7 @@ function restartTest() {
   );
   testCompleteModal.style.display = "none";
   restartButton.style.display = "none";
-  document.removeEventListener("keydown", moveCursor);
+  document.removeEventListener("keydown", handleKeydown);
   confetti.style.display = "none";
   
   timeRemainingContainer.textContent = `${String(testDuration)}s`;
