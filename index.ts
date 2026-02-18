@@ -336,9 +336,9 @@ function generateRandomTest() {
 
 function saveScoreToStorage() {
   const { WPM, accuracy, correctChars, incorrectChars } = getTestStats();
-  let storage = JSON.parse(window.localStorage.getItem("history")!) || [];
-  console.log(storage);
-  if (storage === null || storage.length === 0) {
+  let raw = window.localStorage.getItem("history");
+  const storage = raw ? JSON.parse(raw) : [];
+  if (storage.length === 0) {
     storage.push({
       date: new Date(Date.now()).toLocaleDateString("ro-Ro", {
         day: "2-digit",
