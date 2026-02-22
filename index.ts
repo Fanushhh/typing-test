@@ -76,7 +76,7 @@ let currentIndex = 0;
 let testDuration = 60;
 let difficulty: difficultyType = "medium";
 let mode = "timed";
-let elapsed: number;
+let elapsed = 0;
 let timerInterval: number;
 let testStarted = false;
 let isFocusedOnText = false;
@@ -250,9 +250,9 @@ function endTest(elapsed: number) {
   const { WPM, accuracy, correctChars, incorrectChars } = getTestStats();
   
   const storage = getStorageData();
-  const personalRecord = Math.max(
+  const personalRecord = storage.length > 0 ? Math.max(
     ...storage.map((item: StorageRecord) => item.WPM),
-  ) || 0;
+  ) : 0;
   restartButton.style.display = "none";
   wpmContainer.forEach((container) => {
     container.textContent = String(WPM);
@@ -432,7 +432,7 @@ function shareScore() {
   ⌨️ I just took a typing test!
 
 ⚡ Speed: ${WPM} WPM
-🎯 Accuracy: ${accuracy}%
+🎯 Accuracy: ${accuracy}
 ⏱️ Time: ${testDuration}
 
 Try it yourself:
