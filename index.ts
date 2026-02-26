@@ -1,14 +1,7 @@
 import { data } from "./data.js";
-
-type StorageRecord = {
-  date: Date;
-  name: string;
-  WPM: number;
-  accuracy: string;
-  correctChars: number;
-  incorrectChars: number;
-};
-
+import transformData from "./utils.js";
+import { getStorageData } from "./utils.js";
+import type { StorageRecord } from "./types.js";
 const difficultyInput = document.querySelector(
   ".difficulty",
 )! as HTMLFieldSetElement;
@@ -69,7 +62,9 @@ const testCompleteImage = document.querySelector(
 const toggleHistoryBtns = document.querySelectorAll(
   ".toggle-history-btn",
 ) as NodeListOf<HTMLButtonElement>;
-const shareBtn = document.querySelector('.share-results-btn') as HTMLButtonElement;
+const shareBtn = document.querySelector(
+  ".share-results-btn",
+) as HTMLButtonElement;
 
 type difficultyType = "easy" | "medium" | "hard";
 let currentIndex = 0;
@@ -79,7 +74,7 @@ let elapsed = 0;
 let timerInterval: number;
 let testStarted = false;
 let isFocusedOnText = false;
-let charSpans:HTMLSpanElement[] = [];
+let charSpans: HTMLSpanElement[] = [];
 difficultyInput.addEventListener("change", setDifficulty);
 difficultyInputMobile.addEventListener("change", setDifficulty);
 modeInput.addEventListener("change", (e) => {
@@ -108,7 +103,6 @@ document.addEventListener("click", (e) => {
   }
 });
 
-
 toggleHistoryBtns.forEach((button) => {
   button.addEventListener("click", openHistory);
 });
@@ -116,7 +110,7 @@ toggleHistoryBtns.forEach((button) => {
 startButton.addEventListener("click", startTest);
 
 restartButton.addEventListener("click", restartTest);
-shareBtn.addEventListener('click', shareScore)
+shareBtn.addEventListener("click", shareScore);
 
 testCompleteButton.addEventListener("click", restartTest);
 deleteHistoryBtn.addEventListener("click", deleteHistory);
@@ -129,7 +123,9 @@ function startTest() {
   // dispare butonul si overlay-ul care cauza blur🏗️
   // pentru asta trebuie sa am o interfata suprapusa cu textul care are un buton de start si un fundal cu blur ✅
   // de creat in HTML/CSS✅
-  charSpans = Array.from(document.querySelectorAll<HTMLSpanElement>(".input-char"));
+  charSpans = Array.from(
+    document.querySelectorAll<HTMLSpanElement>(".input-char"),
+  );
   startButtonContainer.style.display = "none";
   textContainer.classList.remove("inactive");
   // Incepe timerul✅
@@ -174,24 +170,22 @@ function restartTest() {
   );
   testCompleteModal.style.display = "none";
   restartButton.style.display = "none";
-  
+
   confetti.style.display = "none";
-  
+
   timeRemainingContainer.textContent = `${String(testDuration)}s`;
 
   generateRandomTest();
 }
 function handleKeydown(e: KeyboardEvent) {
-  if(testStarted){
+  if (testStarted) {
     moveCursor(e);
-  }
-  else if(isFocusedOnText) {
+  } else if (isFocusedOnText) {
     startTest();
   }
 }
 
 function moveCursor(e: KeyboardEvent) {
- 
   if (e.key === "Backspace") {
     e.preventDefault();
 
@@ -208,7 +202,6 @@ function moveCursor(e: KeyboardEvent) {
     }
     return;
   }
-  
 
   // Ignore special keys (Shift, Ctrl, Arrow keys, etc.)
   if (e.key.length > 1) return;
@@ -233,7 +226,7 @@ function moveCursor(e: KeyboardEvent) {
   // Add cursor to next character (if exists)
   if (currentIndex < charSpans.length) {
     charSpans[currentIndex]?.classList.add("cursor-at");
-  } else if(testStarted) {
+  } else if (testStarted) {
     endTest();
   }
 }
@@ -241,17 +234,19 @@ function moveCursor(e: KeyboardEvent) {
 function endTest() {
   clearInterval(timerInterval);
   handleInputs(false);
-  const { WPM, accuracy, accNumber, correctChars, incorrectChars } = getTestStats();
-  
+  const { WPM, accuracy, accNumber, correctChars, incorrectChars } =
+    getTestStats();
+
   const storage = getStorageData();
-  const personalRecord = storage.length > 0 ? Math.max(
-    ...storage.map((item: StorageRecord) => item.WPM),
-  ) : 0;
+  const personalRecord =
+    storage.length > 0
+      ? Math.max(...storage.map((item: StorageRecord) => item.WPM))
+      : 0;
   restartButton.style.display = "none";
   wpmContainer.forEach((container) => {
     container.textContent = String(WPM);
   });
-  
+
   accuracyContainer.forEach((container) => {
     container.classList.remove("good", "bad", "medium");
     container.textContent = accuracy;
@@ -311,12 +306,14 @@ function getTestStats() {
     document.querySelectorAll<HTMLSpanElement>(".correct").length;
   const incorrectChars =
     document.querySelectorAll<HTMLSpanElement>(".incorrect").length;
-  const accNumber = (correctChars + incorrectChars) === 0
-    ? 0
-    : Math.round((correctChars / (correctChars + incorrectChars)) * 100);
-  const accuracy = accNumber === 0 ? '0%' : `${accNumber}%`;
+  const accNumber =
+    correctChars + incorrectChars === 0
+      ? 0
+      : Math.round((correctChars / (correctChars + incorrectChars)) * 100);
+  const accuracy = accNumber === 0 ? "0%" : `${accNumber}%`;
   let wordsTyped = correctChars / 5;
-  let WPM = (elapsed > 0 && wordsTyped > 0) ? Math.floor(wordsTyped / (elapsed / 60)) : 0;
+  let WPM =
+    elapsed > 0 && wordsTyped > 0 ? Math.floor(wordsTyped / (elapsed / 60)) : 0;
   return { WPM, accuracy, accNumber, totalChars, correctChars, incorrectChars };
 }
 
@@ -332,8 +329,12 @@ function generateRandomTest() {
   textContainer.innerHTML = transformData(randomText!.text);
 }
 
-function saveScoreToStorage(WPM:number, accuracy:string, correctChars:number, incorrectChars:number) {
-  
+function saveScoreToStorage(
+  WPM: number,
+  accuracy: string,
+  correctChars: number,
+  incorrectChars: number,
+) {
   const storage = getStorageData();
   if (storage.length === 0) {
     storage.push({
@@ -364,15 +365,14 @@ function openHistory() {
 }
 
 function populateHistory() {
-  
-  const storage = getStorageData()
+  const storage = getStorageData();
   const personalBest = Math.max(
     ...storage.map((test: StorageRecord) => test.WPM),
   );
   historyTableBody.innerHTML = storage
     .map((item: StorageRecord) => {
       return `<tr>
-            <td>${new Date(item.date).toLocaleDateString('ro-RO', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'})}</td>
+            <td>${new Date(item.date).toLocaleDateString("ro-RO", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}</td>
             <td>${item.WPM}</td>
             <td>${item.accuracy}</td>
             <td>${item.correctChars}/ ${item.incorrectChars}</td>
@@ -403,14 +403,6 @@ function setDifficulty() {
   generateRandomTest();
 }
 
-function transformData(data: string) {
-  return data
-    .split("")
-    .map((char) => `<span class="input-char">${char}</span>`)
-    .join("");
-}
-
-
 function shareScore() {
   const { WPM, accuracy } = getTestStats();
   const text = `
@@ -429,23 +421,4 @@ https://typing-test0121.netlify.app/
   });
 }
 
-function getStorageData(){
-  const raw = window.localStorage.getItem('history');
 
-let storage: StorageRecord[] = [];
-
-try {
-  const parsed = raw ? JSON.parse(raw) : [];
-  // Validate parsed data is an array
-  if (Array.isArray(parsed)) {
-    // Filter items to ensure they have a numeric WPM property
-    storage = parsed.filter(
-      (item) => item && typeof item.WPM === 'number'
-    );
-  }
-} catch {
-  // If JSON.parse fails, fallback to empty array
-  storage = [];
-}
-return storage;
-}
