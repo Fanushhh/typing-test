@@ -80,7 +80,7 @@ let elapsed = 0;
 let timerInterval: number;
 let testStarted = false;
 let isFocusedOnText = false;
-
+let charSpans:HTMLSpanElement[] = [];
 difficultyInput.addEventListener("change", (e) => {
   setDifficulty(e);
 });
@@ -134,13 +134,12 @@ function startTest() {
   // dispare butonul si overlay-ul care cauza blur🏗️
   // pentru asta trebuie sa am o interfata suprapusa cu textul care are un buton de start si un fundal cu blur ✅
   // de creat in HTML/CSS✅
-
+  charSpans = Array.from(document.querySelectorAll<HTMLSpanElement>(".input-char"));
   startButtonContainer.style.display = "none";
   textContainer.classList.remove("inactive");
   // Incepe timerul✅
   // stergem orice clasa de correct/incorrect/cursor-at si le punem de la primul caracter
   handleInputs(true);
-  const charSpans = document.querySelectorAll<HTMLSpanElement>(".input-char");
   charSpans.forEach((char) => char.classList.remove("correct", "incorrect"));
   restartButton.style.display = "flex";
   charSpans[0]?.classList.add("cursor-at");
@@ -197,8 +196,7 @@ function handleKeydown(e: KeyboardEvent) {
 }
 
 function moveCursor(e: KeyboardEvent) {
-  const charSpans = document.querySelectorAll<HTMLSpanElement>(".input-char");
-  // Handle Backspace FIRST (before other checks)
+ 
   if (e.key === "Backspace") {
     e.preventDefault();
 
@@ -215,6 +213,7 @@ function moveCursor(e: KeyboardEvent) {
     }
     return;
   }
+  
 
   // Ignore special keys (Shift, Ctrl, Arrow keys, etc.)
   if (e.key.length > 1) return;
@@ -247,7 +246,7 @@ function moveCursor(e: KeyboardEvent) {
 function endTest(elapsed: number) {
   clearInterval(timerInterval);
   handleInputs(false);
-  const { WPM, accuracy, correctChars, incorrectChars } = getTestStats();
+  const { WPM, accuracy, accNumber, correctChars, incorrectChars } = getTestStats();
   
   const storage = getStorageData();
   const personalRecord = storage.length > 0 ? Math.max(
@@ -261,9 +260,6 @@ function endTest(elapsed: number) {
   accuracyContainer.forEach((container) => {
     container.classList.remove("good", "bad", "medium");
     container.textContent = accuracy;
-    const accNumber = Math.round(
-      (correctChars / (correctChars + incorrectChars)) * 100,
-    );
 
     switch (true) {
       case accNumber > 90:
@@ -298,7 +294,7 @@ function endTest(elapsed: number) {
   incorrectCharContainer.classList.add("bad");
   textContainer.classList.add("inactive");
   testCompleteModal.style.display = "flex";
-  saveScoreToStorage();
+  saveScoreToStorage(WPM, accuracy, correctChars, incorrectChars);
   establishPersonalRecord();
   populateHistory();
 }
@@ -320,12 +316,13 @@ function getTestStats() {
     document.querySelectorAll<HTMLSpanElement>(".correct").length;
   const incorrectChars =
     document.querySelectorAll<HTMLSpanElement>(".incorrect").length;
-  let accuracy = totalChars.length === 0 
-  ? '0%' 
-  : `${Math.round((correctChars / totalChars.length) * 100)}%`;
+  const accNumber = (correctChars + incorrectChars) === 0
+    ? 0
+    : Math.round((correctChars / (correctChars + incorrectChars)) * 100);
+  const accuracy = accNumber === 0 ? '0%' : `${accNumber}%`;
   let wordsTyped = correctChars / 5;
   let WPM = (elapsed > 0 && wordsTyped > 0) ? Math.floor(wordsTyped / (elapsed / 60)) : 0;
-  return { WPM, accuracy, totalChars, correctChars, incorrectChars };
+  return { WPM, accuracy, accNumber, totalChars, correctChars, incorrectChars };
 }
 
 function generateRandomTest() {
@@ -340,8 +337,7 @@ function generateRandomTest() {
   textContainer.innerHTML = transformData(randomText!.text);
 }
 
-function saveScoreToStorage() {
-  const { WPM, accuracy, correctChars, incorrectChars } = getTestStats();
+function saveScoreToStorage(WPM:number, accuracy:string, correctChars:number, incorrectChars:number) {
   
   const storage = getStorageData();
   if (storage.length === 0) {
@@ -411,8 +407,7 @@ function establishPersonalRecord() {
 function setDifficulty(e: Event) {
   const target = e.target as HTMLInputElement;
   difficulty = target.value as difficultyType;
-  const newText = generateRandomText(difficulty);
-  textContainer.innerHTML = transformData(newText!.text);
+  generateRandomTest();
 }
 
 function transformData(data: string) {
@@ -422,9 +417,6 @@ function transformData(data: string) {
     .join("");
 }
 
-function generateRandomText(difficulty: difficultyType) {
-  return data[difficulty][Math.floor(Math.random() * 10)];
-}
 
 function shareScore() {
   const { WPM, accuracy } = getTestStats();
