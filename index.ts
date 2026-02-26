@@ -74,19 +74,14 @@ const shareBtn = document.querySelector('.share-results-btn') as HTMLButtonEleme
 type difficultyType = "easy" | "medium" | "hard";
 let currentIndex = 0;
 let testDuration = 60;
-let difficulty: difficultyType = "medium";
 let mode = "timed";
 let elapsed = 0;
 let timerInterval: number;
 let testStarted = false;
 let isFocusedOnText = false;
 let charSpans:HTMLSpanElement[] = [];
-difficultyInput.addEventListener("change", (e) => {
-  setDifficulty(e);
-});
-difficultyInputMobile.addEventListener("change", (e) => {
-  setDifficulty(e);
-});
+difficultyInput.addEventListener("change", setDifficulty);
+difficultyInputMobile.addEventListener("change", setDifficulty);
 modeInput.addEventListener("change", (e) => {
   const target = e.target as HTMLInputElement;
   mode = target.value;
@@ -157,7 +152,7 @@ function startTest() {
     if (mode === "timed") {
       const remaining = Math.max(0, testDuration - elapsed);
       if (remaining <= 0) {
-        endTest(elapsed);
+        endTest();
       }
       timeRemainingContainer.textContent = `${remaining.toFixed(1)}s`;
     } else {
@@ -239,11 +234,11 @@ function moveCursor(e: KeyboardEvent) {
   if (currentIndex < charSpans.length) {
     charSpans[currentIndex]?.classList.add("cursor-at");
   } else if(testStarted) {
-    endTest(elapsed);
+    endTest();
   }
 }
 
-function endTest(elapsed: number) {
+function endTest() {
   clearInterval(timerInterval);
   handleInputs(false);
   const { WPM, accuracy, accNumber, correctChars, incorrectChars } = getTestStats();
@@ -404,9 +399,7 @@ function establishPersonalRecord() {
   }
   personalBestContainer.textContent = String(personalBestWPM);
 }
-function setDifficulty(e: Event) {
-  const target = e.target as HTMLInputElement;
-  difficulty = target.value as difficultyType;
+function setDifficulty() {
   generateRandomTest();
 }
 
@@ -430,7 +423,10 @@ function shareScore() {
 Try it yourself:
 https://typing-test0121.netlify.app/
 `;
-  navigator.clipboard.writeText(text);
+  navigator.clipboard.writeText(text).then(() => {
+    shareBtn.classList.add("copied");
+    setTimeout(() => shareBtn.classList.remove("copied"), 2000);
+  });
 }
 
 function getStorageData(){

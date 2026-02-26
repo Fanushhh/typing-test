@@ -573,7 +573,28 @@ input[type="radio"]:focus + label {
 .share-results-btn img{
   width: 20px;
   height: 20px;
-  
+}
+.share-results-btn {
+  position: relative;
+}
+.share-results-btn::after {
+  content: "Copied!";
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--neutral-800);
+  color: var(--neutral-0);
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.share-results-btn.copied::after {
+  opacity: 1;
 }
 .test-complete-container{
   position:absolute;
